@@ -19,12 +19,13 @@
     </Window.Resources>
 
 
-    
-    <Grid PreviewMouseDown="Grid_PreviewMouseDown">
+
+    <Grid>
+    <!--<Grid PreviewMouseDown="Grid_PreviewMouseDown">-->
 
 
 
-        <Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
             <ColumnDefinition Width="625*" />
             <ColumnDefinition Width="21*" />
         </Grid.ColumnDefinitions>
