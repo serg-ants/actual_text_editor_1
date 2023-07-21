@@ -46,6 +46,10 @@ namespace WpfApp1
         {
             ColorListBox.SelectedItem = new SolidColorBrush(Colors.Black);
         }
+
+
+
+
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             var italicChecked = italicCheckBox.IsChecked ?? false;
@@ -262,6 +266,11 @@ namespace WpfApp1
         private void Application_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void Help_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("There is no help :(");
         }
 
         private void ColorListBox_SelectionChanged(object sender, RoutedEventArgs e)

@@ -5,8 +5,97 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="Editing_params" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Text editing parameters" Height="250" Width="400">
+    <WrapPanel>
+        <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Vertical">
+                <TextBlock
+                 Height="24"
+           Width="90"
+            Text="Font family"
+            TextWrapping="Wrap" />
+
+                <ComboBox
+            x:Name="Font_Family_ComboBox"
+           
+            local:ComboBoxBehavior.SingleClickSelection="True"
+            DisplayMemberPath="Source"
+            IsEditable="True"
+            ItemsSource="{Binding Source={x:Static Fonts.SystemFontFamilies}}"
+            SelectedItem="{Binding ElementName=File_contents, Path=FontFamily}"
+            SelectionChanged="ComboBox_SelectionChanged_1" />
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical">
+                <TextBlock
+                 Height="24"
+           Width="90"
+            Text="Style"
+            TextWrapping="Wrap" />
+
+                <CheckBox
+            x:Name="italicCheckBox"
+            Checked="CheckBox_Checked"
+            Content="italic"
+            Unchecked="CheckBox_Unchecked" />
+                <CheckBox
+            x:Name="boldCheckBox"
+            Checked="CheckBox_Checked"
+            Content="bold"
+            Unchecked="CheckBox_Unchecked" />
+                <CheckBox
+            x:Name="underlinedCheckBox"
+            Checked="CheckBox_Checked"
+            Content="underline"
+            Unchecked="CheckBox_Unchecked" />
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <TextBlock
+                 Height="24"
+           Width="90"
+            Text="Size"
+            TextWrapping="Wrap" />
+                <ComboBox
+            x:Name="sizeComboBox"
+            local:ComboBoxBehavior.SingleClickSelection="True"
+            IsEditable="True"
+            ItemsSource="{Binding fontSizes}"
+            SelectedIndex=" 0"
+            SelectionChanged="FontSizeComboBox_SelectionChanged" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock
+            Height="24"
+           Width="90"
+            Text="Color"
+            TextWrapping="Wrap" />
+
+
+                <ListBox
+            x:Name="ColorListBox"
+            SelectedIndex="7"
+            SelectionChanged="ComboBox_SelectionChanged" Height="50" Width="92">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Foreground="{Binding}" Text="{Binding}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical">
+            <TextBlock
+                 Height="24"
+           Width="90"
+            Text="SAMPLE"
+            TextWrapping="Wrap" />
+            <TextBlock
+                 Height="121"
+           Width="390"
+            Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            TextWrapping="Wrap" />
+        </StackPanel>
+    </WrapPanel>
 </Window>

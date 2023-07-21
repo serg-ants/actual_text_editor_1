@@ -21,24 +21,56 @@
 
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-            <Button>
-                <Label Background="Red">Red 2</Label>
-            </Button>
-            <Button>
-                <Label Background="LightGreen">Green 2</Label>
-            </Button>
-            <Button>
-                <Label Background="LightBlue">Blue 2</Label>
-            </Button>
-            <Button>
-                <Label Background="Yellow">Yellow 2</Label>
-            </Button>
-            <Button>
-                <Label Background="Orange">Orange 2</Label>
-            </Button>
+            <Menu>
+                <MenuItem Header="File">
+                    <MenuItem Header="New"/>
+                    <MenuItem Header="Open"/>
+                    <MenuItem Header="Save"/>
+                    <MenuItem Header="Save as"/>
+                    <MenuItem Header="Exit"/>
+                </MenuItem>
+                <MenuItem Header="Edit">
+                    <MenuItem Header="Font"/>
+                    <MenuItem Header="Style"/>
+                    <MenuItem Header="Size"/>
+                    <MenuItem Header="Color"/>
+                </MenuItem>
+                <MenuItem Header="View">
+                    <MenuItem Header="Zoom In"/>
+                    <MenuItem Header="Zoom Out"/>
+                </MenuItem>
+                <MenuItem Header="Help">
+                    <MenuItem Header="About"/>
+                </MenuItem>
+            </Menu>
         </StackPanel>
-        <Label DockPanel.Dock="Right"  Background="Orange">Orange 2</Label>
-       
+        <!--<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <Button>
+                <Label Background="Red">File</Label>
+            </Button>
+            <Button>
+                <Label Background="LightGreen">Edit</Label>
+            </Button>
+            <Button>
+                <Label Background="LightBlue">Format</Label>
+            </Button>
+            <Button>
+                <Label Background="Yellow">View</Label>
+            </Button>
+            <Button Click="Help_Click">
+                <Label Background="Orange">Help</Label>
+            </Button>
+        </StackPanel>-->
+        <TextBox
+            DockPanel.Dock="Bottom"
+            x:Name="File_contents"
+          
+            FontSize="{Binding ElementName=sizeComboBox, Path=SelectedItem}"
+            RenderTransformOrigin="0.19,0.474"
+            ScrollViewer.CanContentScroll="True"
+            TextChanged="TextBox_TextChanged"
+            TextWrapping="Wrap"
+            VerticalScrollBarVisibility="Auto" />
     </DockPanel>
 
    
