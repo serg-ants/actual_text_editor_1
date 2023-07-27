@@ -217,14 +217,20 @@ namespace WpfApp1
                         object obj_ = new object();
                         Generalized_Saving_procedure(obj_, args_, ref yn);
 
-                        
+
 
                         if (!yn)
                         { e.Cancel = true; }
+                        else
+                        {
+                            CloseAndShutDown();
+                        }
 
                         break;
                     case MessageBoxResult.No:
-                        // Do nothing
+                        {
+                            CloseAndShutDown();
+                        }
                         break;
                     case MessageBoxResult.Cancel:
                         e.Cancel = true; // Cancel the closing event
@@ -289,8 +295,9 @@ namespace WpfApp1
             Success = false;
 
             string fileName = this.Title;
+            string contts = File_contents.Text;
 
-            if (!(fileName == "New document" && File_contents.Text == ""))
+            if (!(fileName == "New document" && contts == ""))
             {
                 if (fileName == "New document")
                 {
@@ -344,7 +351,24 @@ namespace WpfApp1
 
             Success = result.Value;
         }
+
+        public void CloseAndShutDown()
+        {
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window is Editing_params)
+                {
+                    window.Close();
+                    break;
+                }
+            }
+            Application.Current.Shutdown();
+        }
+
+
+       
+
     }
-    
+
 
 }

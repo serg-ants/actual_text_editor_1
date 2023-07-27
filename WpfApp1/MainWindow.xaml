@@ -9,6 +9,7 @@
     Title="New document"
     Width="554.091"
     Height="320.545"
+   
     mc:Ignorable="d">
 
     <Window.Resources>
@@ -69,7 +70,7 @@
        
     </DockPanel>
 
-   
+    
 
 
 
