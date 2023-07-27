@@ -15,6 +15,9 @@ using System.Windows.Shapes;
 
 using System.IO;
 
+using Microsoft.Win32;
+
+using System.ComponentModel;
 
 namespace WpfApp1
 {
@@ -25,170 +28,209 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        public List<int> fontSizes { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = this;
-            Input_Dir_Default_txt = Input_Dir.Text;
+        }
 
-            Loaded += MainWindow_Loaded;
 
-            foreach (var color in typeof(Colors).GetProperties())
+
+
+        private Editing_params _editingWindow;
+
+        private void EditingWindow_Closing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = true;
+            _editingWindow.Visibility = Visibility.Hidden;
+        }
+
+
+        private void Edit_Click(object sender, RoutedEventArgs e)
+        {
+            if (_editingWindow == null)
             {
-                ColorListBox.Items.Add(color.Name);
-            }
-
-            fontSizes = new List<int> { 8, 9, 10, 12, 14, 16, 18, 20, 24, 26, 28, 30 };
-        }
-
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            ColorListBox.SelectedItem = new SolidColorBrush(Colors.Black);
-        }
-
-
-
-
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            var italicChecked = italicCheckBox.IsChecked ?? false;
-            var underlChecked = underlinedCheckBox.IsChecked ?? false;
-            var boldChecked = boldCheckBox.IsChecked ?? false;
-
-            if (italicChecked)
-                File_contents.FontStyle = FontStyles.Italic;
-            else
-                File_contents.FontStyle = FontStyles.Normal;
-            if (underlChecked)
-                File_contents.TextDecorations = TextDecorations.Underline;
-            else
-                File_contents.TextDecorations = null;
-            if (boldChecked)
-                File_contents.FontWeight = FontWeights.Bold;
-            else
-                File_contents.FontWeight = FontWeights.Normal;
-        }
-
-        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            CheckBox_Checked(sender, e);
-        }
-        private void SaveButton_Click(object sender, RoutedEventArgs s)
-        {
-            string temp_File_Path;
-            temp_File_Path = curr_file.Text;
-            if (temp_File_Path != "")
-            {
-                var result = MessageBox.Show("Do you want to save changes?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    File.WriteAllText(curr_file.Text, File_contents.Text);
-                }
+                _editingWindow = new Editing_params(this);
+                _editingWindow.Closing += EditingWindow_Closing;
+                _editingWindow.Show();
             }
             else
             {
-                var result = MessageBox.Show("No file opened", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                _editingWindow.Visibility = Visibility.Visible;
             }
         }
-        private void FontSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+
+        //private void EditingWindow_Closing(object sender, CancelEventArgs e)
+        //{
+        //    e.Cancel = true;
+        //    _editingWindow.Visibility = Visibility.Hidden;
+        //}
+
+
+        private void File_New_Click(object sender, RoutedEventArgs e)
         {
-            if (File_contents != null)
+            var result = MessageBox.Show("Do you want to save your changes?", "Save Changes", MessageBoxButton.YesNoCancel);
+            switch (result)
             {
-                if (sizeComboBox.SelectedItem != null)
-                {
-                    int selectedSize = (int)sizeComboBox.SelectedItem;
-                    if (!fontSizes.Contains(selectedSize))
+                case MessageBoxResult.Yes:
+                    // Saving procedure
+                    bool yn = false;
+                    Generalized_Saving_procedure(sender, e, ref yn);
+                    if (yn)
                     {
-                        int closestSize = fontSizes.Aggregate((x, y) => Math.Abs(x - selectedSize) < Math.Abs(y - selectedSize) ? x : y);
-                        File_contents.FontSize = closestSize;
+                        File_contents.Clear();
+                        this.Title = "New document";
+                    }
+                  
+                    break;
+                case MessageBoxResult.No:
 
-                        sizeComboBox.SelectedItem = closestSize;
-                    }
-                    else
-                    {
-                        File_contents.FontSize = selectedSize;
-                    }
+                    File_contents.Clear();
+                    this.Title = "New document";
+                    break;
+                case MessageBoxResult.Cancel:
+                    //args_.Handled = true;
+                    e.Handled = true;
+                    break;
+            }
+
+        }
+
+        private void File_Open_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Do you want to save your changes?", "Save Changes", MessageBoxButton.YesNoCancel);
+            switch (result)
+            {
+                case MessageBoxResult.Yes:
+                    // Saving procedure
+                    bool yn=false;
+                    Generalized_Saving_procedure(sender, e, ref yn);
+                    if(yn)
+                    { Browsing_procedure(sender, e); }
+                   
+                    break;
+                case MessageBoxResult.No:
+                    Browsing_procedure(sender, e);
+                    break;
+                case MessageBoxResult.Cancel:
+                    //args_.Handled = true;
+                    e.Handled = true; 
+                    break;
+            }
+        }
+
+        private void Generalized_Saving_procedure(object sender, RoutedEventArgs e)
+        {
+            string fileName = this.Title;
+
+            if (!(fileName == "New document" && File_contents.Text == ""))
+            {
+                if (fileName == "New document")
+                {
+                    File_Save_As_Click(sender, e);
                 }
                 else
                 {
-                    File_contents.FontSize = 10;
+                    string temp_File_Path;
+                    temp_File_Path = this.Title;
+                    if (temp_File_Path != "")
+                    {
+                        //var result = MessageBox.Show("Do you want to save changes?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        //if (result == MessageBoxResult.Yes)
+                        //{
+                        File.WriteAllText(this.Title, File_contents.Text);
+                        //}
+                    }
                 }
             }
+            else { }
         }
 
-        private void ColorListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void File_Save_Click(object sender, RoutedEventArgs e)
         {
-            string colorName = ColorListBox.SelectedItem.ToString();
-            Color selectedColor = (Color)ColorConverter.ConvertFromString(colorName);
-            File_contents.Foreground = new SolidColorBrush(selectedColor);
+            Generalized_Saving_procedure(sender, e);
         }
 
-        public IEnumerable<double> FontSizeList => new List<double> { 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72 };
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void File_Save_As_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Input_Dir_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if (Input_Dir.Text == Input_Dir_Default_txt)
+            //Save as
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            saveFileDialog.Title = "Save text file";
+            bool? result = saveFileDialog.ShowDialog();
+            if (result == true)
             {
-                Input_Dir.Text = "";
+                using (StreamWriter writer = new StreamWriter(saveFileDialog.FileName))
+                {
+                    writer.Write(File_contents.Text);
+                }
+                this.Title= saveFileDialog.FileName;
+            }
+            else if (result == false)
+            {
+                
+                // User clicked the Cancel button or closed the dialog without saving
+                // Handle this case as needed
+            }
+            else
+            {
+                // Dialog was closed programmatically, not by user interaction
+                // Handle this case as needed
             }
         }
 
-        private void Input_Dir_LostFocus(object sender, RoutedEventArgs e)
+        private void File_Exit_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(Input_Dir.Text))
-            {
-                Input_Dir.Text = Input_Dir_Default_txt;
-            }
+            this.Close();
         }
 
-        private void Grid_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void Browsing_procedure(object sender, RoutedEventArgs e)
         {
-            DependencyObject source = e.OriginalSource as DependencyObject;
-            if (source != null && !IsTextBoxOrChild(source))
-            {
-                //Set focus to a different control or the main window
-                Keyboard.ClearFocus();
-            }
-        }
-
-        private bool IsTextBoxOrChild(DependencyObject obj)
-        {
-            if (obj == null) return false;
-            if (obj is TextBox) return true;
-            return IsTextBoxOrChild(VisualTreeHelper.GetParent(obj));
-        }
-
-        private void BrowseButton_Click(object sender, RoutedEventArgs e)
-        {
+            //Opening
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
             {
-                Input_Dir.Text = openFileDialog.FileName;
+                this.Title = openFileDialog.FileName;
             }
-            ColorListBox.SelectedItem = new SolidColorBrush(Colors.Black);
+            //ColorListBox.SelectedItem = new SolidColorBrush(Colors.Black);
+            OpenButton_Click(sender, e);
+        }
+
+
+        
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            if (true)
+            {
+                var result = MessageBox.Show("Do you want to save your changes?", "Save Changes", MessageBoxButton.YesNoCancel);
+                switch (result)
+                {
+                    case MessageBoxResult.Yes:
+                        // Saving procedure
+
+                        bool yn = false;
+                        RoutedEventArgs args_ = new RoutedEventArgs();
+                        object obj_ = new object();
+                        Generalized_Saving_procedure(obj_, args_, ref yn);
+
+                        
+
+                        if (!yn)
+                        { e.Cancel = true; }
+
+                        break;
+                    case MessageBoxResult.No:
+                        // Do nothing
+                        break;
+                    case MessageBoxResult.Cancel:
+                        e.Cancel = true; // Cancel the closing event
+                        break;
+                }
+            }
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -196,7 +238,7 @@ namespace WpfApp1
 
             try
             {
-                string stringPath = Input_Dir.Text.Trim();
+                string stringPath = this.Title;
 
                 // Validity-of-the-pathway check
                 if (!File.Exists(stringPath))
@@ -220,8 +262,8 @@ namespace WpfApp1
                 // Upload file's contents into a TextBax after reading it
                 string content = File.ReadAllText(stringPath);
                 File_contents.Text = content;
-                curr_file.Text = stringPath;
-                CRFLtext.Text = "Current file:";
+                this.Title = stringPath;
+                
             }
             catch (FileNotFoundException ex)
             {
@@ -242,110 +284,67 @@ namespace WpfApp1
         }
 
 
-
-        private
-          static string Input_Dir_Default_txt;
-
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Generalized_Saving_procedure(object sender, RoutedEventArgs e, ref bool Success)
         {
+            Success = false;
 
-        }
+            string fileName = this.Title;
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            string colorName = ColorListBox.SelectedItem.ToString();
-            Color selectedColor = (Color)ColorConverter.ConvertFromString(colorName);
-            File_contents.Foreground = new SolidColorBrush(selectedColor);
-        }
-
-        private void ComboBox_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void Application_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Help_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("There is no help :(");
-        }
-
-        private void ColorListBox_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            string colorName = ColorListBox.SelectedItem.ToString();
-            Color selectedColor = (Color)ColorConverter.ConvertFromString(colorName);
-            File_contents.Foreground = new SolidColorBrush(selectedColor);
-        }
-    }
-
-    //public class ColorListConverter : System.Windows.Data.IValueConverter
-    //{
-    //    public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    //    {
-    //        return typeof(Colors).GetProperties();
-    //    }
-
-    //    public object ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    //    {
-    //        return null;
-    //    }
-    //}
-
-
-
-    public static class ComboBoxBehavior
-    {
-        public static bool GetSingleClickSelection(DependencyObject obj)
-        {
-            return (bool)obj.GetValue(SingleClickSelectionProperty);
-        }
-
-        public static void SetSingleClickSelection(DependencyObject obj, bool value)
-        {
-            obj.SetValue(SingleClickSelectionProperty, value);
-        }
-
-        public static readonly DependencyProperty SingleClickSelectionProperty = DependencyProperty.
-            RegisterAttached("SingleClickSelection", typeof(bool), typeof(ComboBoxBehavior),
-            new PropertyMetadata(false, OnSingleClickSelectionChanged));
-
-        private static void OnSingleClickSelectionChanged(DependencyObject d,
-            DependencyPropertyChangedEventArgs e)
-        {
-            var comboBox = d as ComboBox;
-            if (comboBox != null)
+            if (!(fileName == "New document" && File_contents.Text == ""))
             {
-                if ((bool)e.NewValue)
+                if (fileName == "New document")
                 {
-                    comboBox.PreviewMouseDown += OnPreviewMouseDown;
+                    File_Save_As_Click(sender, e, ref Success);
                 }
                 else
                 {
-                    comboBox.PreviewMouseDown -= OnPreviewMouseDown;
-                }
+                    string temp_File_Path;
+                    temp_File_Path = this.Title;
+                    if (temp_File_Path != "")
+                    {
+                        //var result = MessageBox.Show("Do you want to save changes?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        //if (result == MessageBoxResult.Yes)
+                        //{
+                        File.WriteAllText(this.Title, File_contents.Text);
+                        //}
 
+                        Success = true;
+                    }
+                }
             }
+          
         }
 
-        private static void OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void File_Save_As_Click(object sender, RoutedEventArgs e, ref bool Success)
         {
-            var comboBox = sender as ComboBox;
-            if (comboBox != null && comboBox.IsDropDownOpen)
+            //Save as
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            saveFileDialog.Title = "Save text file";
+            bool? result = saveFileDialog.ShowDialog();
+            if (result == true)
             {
-                var item = ItemsControl.ContainerFromElement(comboBox, e.OriginalSource as DependencyObject)
-                    as ComboBoxItem;
-                if (item != null)
+                using (StreamWriter writer = new StreamWriter(saveFileDialog.FileName))
                 {
-                    item.IsSelected = true;
-                    comboBox.IsDropDownOpen = false;
-                    e.Handled = true;
+                    writer.Write(File_contents.Text);
                 }
+                this.Title = saveFileDialog.FileName;
             }
+            else if (result == false)
+            {
+
+                // User clicked the Cancel button or closed the dialog without saving
+                // Handle this case as needed
+            }
+            else
+            {
+                // Dialog was closed programmatically, not by user interaction
+                // Handle this case as needed
+            }
+
+            Success = result.Value;
         }
     }
-
+    
 
 }

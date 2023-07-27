@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="Text editing parameters" Height="250" Width="400">
+        Title="Text editing parameters" Height="354" Width="428">
     <WrapPanel>
         <StackPanel Orientation="Horizontal">
-            <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Vertical" Height="130" Width="127">
                 <TextBlock
                  Height="24"
            Width="90"
@@ -23,7 +23,7 @@
             IsEditable="True"
             ItemsSource="{Binding Source={x:Static Fonts.SystemFontFamilies}}"
             SelectedItem="{Binding ElementName=File_contents, Path=FontFamily}"
-            SelectionChanged="ComboBox_SelectionChanged_1" />
+            SelectionChanged="ComboBox_SelectionChanged_1" Height="82"  />
             </StackPanel>
 
             <StackPanel Orientation="Vertical">
@@ -61,7 +61,7 @@
             IsEditable="True"
             ItemsSource="{Binding fontSizes}"
             SelectedIndex=" 0"
-            SelectionChanged="FontSizeComboBox_SelectionChanged" />
+            SelectionChanged="FontSizeComboBox_SelectionChanged" Height="74" />
             </StackPanel>
             <StackPanel>
                 <TextBlock
@@ -74,7 +74,7 @@
                 <ListBox
             x:Name="ColorListBox"
             SelectedIndex="7"
-            SelectionChanged="ComboBox_SelectionChanged" Height="50" Width="92">
+            SelectionChanged="ComboBox_SelectionChanged" Height="73" Width="92">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Foreground="{Binding}" Text="{Binding}" />
@@ -92,8 +92,10 @@
             Text="SAMPLE"
             TextWrapping="Wrap" />
             <TextBlock
+                Name="Sample_text"
                  Height="121"
            Width="390"
+                FontFamily="{Binding ElementName=Font_Family_ComboBox, Path=SelectedItem}"
             Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             TextWrapping="Wrap" />
         </StackPanel>

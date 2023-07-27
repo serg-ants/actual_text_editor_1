@@ -6,34 +6,27 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:WpfApp1"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="MainWindow"
-    Width="854.091"
-    Height="720.545"
+    Title="New document"
+    Width="554.091"
+    Height="320.545"
     mc:Ignorable="d">
 
     <Window.Resources>
         <local:DivideConverter x:Key = "DivideConverter"/>
         <local:MultiplyConverter x:Key = "MultiplyConverter"/>
-
-
     </Window.Resources>
-
 
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
             <Menu>
                 <MenuItem Header="File">
-                    <MenuItem Header="New"/>
-                    <MenuItem Header="Open"/>
-                    <MenuItem Header="Save"/>
-                    <MenuItem Header="Save as"/>
-                    <MenuItem Header="Exit"/>
+                    <MenuItem Header="New" Click="File_New_Click"/>
+                    <MenuItem Header="Open" Click="File_Open_Click"/>
+                    <MenuItem Header="Save" Click="File_Save_Click"/>
+                    <MenuItem Header="Save as"  Click="File_Save_As_Click"/>
+                    <MenuItem Header="Exit" Click="File_Exit_Click"/>
                 </MenuItem>
-                <MenuItem Header="Edit">
-                    <MenuItem Header="Font"/>
-                    <MenuItem Header="Style"/>
-                    <MenuItem Header="Size"/>
-                    <MenuItem Header="Color"/>
+                <MenuItem Header="Edit" Click="Edit_Click">
                 </MenuItem>
                 <MenuItem Header="View">
                     <MenuItem Header="Zoom In"/>
@@ -68,9 +61,12 @@
             FontSize="{Binding ElementName=sizeComboBox, Path=SelectedItem}"
             RenderTransformOrigin="0.19,0.474"
             ScrollViewer.CanContentScroll="True"
-            TextChanged="TextBox_TextChanged"
+            
             TextWrapping="Wrap"
             VerticalScrollBarVisibility="Auto" />
+       
+       
+       
     </DockPanel>
 
    
